@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Produtos</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+
+        #barra-topo {
+            background-color: #3498db;
+            color: #fff;
+            padding: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        #barra-topo a {
+            color: #fff;
+            text-decoration: none;
+            margin-right: 20px;
+        }
+
+        #produtos-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 50px;
+            max-width: 800px; /* Largura máxima do contêiner */
+            margin: 0 auto; /* Centraliza o contêiner */
+        }
+
+        .produto-layout {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 100%; /* Ocupa 100% da largura do contêiner */
+        }
+
+        .imagem-produto {
+            max-width: 200px;
+            height: auto;
+            margin-right: 30px; /* Adiciona espaço à direita da imagem */
+        }
+
+        .produto-info-layout {
+            flex-grow: 1;
+            text-align: flex-end;
+        }
+
+        .botoes-layout {
+            display: flex;
+            flex-direction: row; /* Alterado de line para row */
+            align-items: flex-start;
+            justify-content: flex-end; /* Adicionado para alinhar à direita */
+            margin-top: auto; /* Mover para a parte inferior */
+        }
+        
+
+        .botao {
+            background-color: #3498db;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            padding: 5px;
+            margin: 5px;
+            cursor: pointer;
+            align-items: flex-end;
+        }
+
+        .botao:hover {
+            background-color: #2980b9;
+        }
+
+        .quantidade-layout {
+            display: flex;
+            align-items: flex-end;
+            margin-left: 10px;
+        }
+
+        .quantidade-input {
+            width: 30px;
+            margin: 0 10px;
+            align-items: flex-end;
+        }
+
+        .valor-produto {
+            font-size: 14px;
+            color: #555;
+            margin-top: 5px;
+            text-align: right; /* Ajusta o texto para a direita */
+        }
+
+        .concluir-botao {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #3498db;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            padding: 10px;
+            cursor: pointer;
+        }
+
+        .concluir-botao:hover {
+            background-color: #2980b9;
+        }
+    </style>
+</head>
+<body>
+    <div id="barra-topo">
+        <!-- Adicione uma imagem aqui -->
+        <img src="caminho/para/sua/imagem.png" alt="Imagem" style="max-width: 30px; margin-right: 10px;">
+        
+        <div id="nome-sair">
+            <a href="#" onclick="abrirCarrinho()">
+                <i class="fas fa-shopping-cart"></i>
+            </a>
+            <!-- Adicione um span com um identificador ao redor do nome do cliente -->
+            <span id="nome-cliente-span">
+                <!-- O JavaScript será usado para preencher este span -->
+            </span>
+            <a href="#" onclick="sair()">Sair</a>
+        </div>
+    </div>
+
+    <button id="concluir-botao" class="concluir-botao" onclick="concluirPedido()">Concluir Pedido</button>
+
+    <h1>Lista de Produtos</h1>
+    <div id="produtos-container"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            fetch('http://localhost:3000/ListaProdutos')
+                .then(response => response.json())
+                .then(produtos => {
+                    const produtosContainer = document.getElementById('produtos-container');
+
+                    produtos.forEach(produto => {
+                        const produtoElement = document.createElement('div');
+                        produtoElement.classList.add('produto-layout');
+
+                        produtoElement.innerHTML = `
+                            <img src="${produto.imagem_path}" alt="Novo Produto" class="imagem-produto">
+                            <div class="produto-info-layout">
+                                <h2>${produto.nome}</h2>
+                                <p>${produto.descricao}</p>
+                                <div class="botoes-layout">
+                                    <p class="valor-produto">Preço: ${produto.preco}</p>
+                                    <button class="botao" onclick="aumentarQuantidade(this)">+</button>
+                                    <div class="quantidade-layout">
+                                        <input type="text" class="quantidade-input" value="0">
+                                    </div>
+                                    <button class="botao" onclick="diminuirQuantidade(this)">-</button>
+                                </div>
+                            </div>
+                        `;
+
+                        produtosContainer.appendChild(produtoElement);
+                    });
+                })
+                .catch(error => console.error(error));
+        });
+
+        function abrirCarrinho() {
+            window.location.href = "tela_pagamento.html";
+        }
+
+        function sair() {       
+            window.location.href = "tela_entrada.html";
+        }
+
+        function aumentarQuantidade(button) {
+            // Implemente a lógica para aumentar a quantidade aqui
+            var inputQuantidade = button.nextElementSibling.querySelector('.quantidade-input');
+            inputQuantidade.value = parseInt(inputQuantidade.value) + 1;
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            // Verificar se o usuário está autenticado no localStorage
+            var usuarioAutenticado = localStorage.getItem('usuarioAutenticado');
+            
+            if (usuarioAutenticado) {
+                // Obter informações do usuário do localStorage
+                var usuarioInfo = JSON.parse(usuarioAutenticado);
+                
+                // Atualizar o conteúdo do span com o nome do cliente
+                document.getElementById('nome-cliente-span').textContent = usuarioInfo.nome; // Substitua 'email' pelo campo correto
+            }
+        });
+
+        function diminuirQuantidade(button) {
+            // Implemente a lógica para diminuir a quantidade aqui
+            var inputQuantidade = button.previousElementSibling.querySelector('.quantidade-input');
+            var novaQuantidade = parseInt(inputQuantidade.value) - 1;
+            inputQuantidade.value = novaQuantidade >= 0 ? novaQuantidade : 0;
+        }
+
+        function concluirPedido() {
+            // Obtenha os elementos de produto na página atual
+            const produtosElementos = document.querySelectorAll('.produto-layout');
+
+            // Inicialize um array para armazenar as informações dos produtos com quantidade > 0
+            const produtosDoPedido = [];
+
+            // Itere sobre os elementos de produto para obter as informações
+            produtosElementos.forEach(produtoElement => {
+                const quantidade = parseInt(produtoElement.querySelector('.quantidade-input').value);
+
+                // Se a quantidade for maior que zero, adicione as informações do produto ao array
+                if (quantidade > 0) {
+                    const imagemPath = produtoElement.querySelector('.imagem-produto').src;
+                    const nome = produtoElement.querySelector('.produto-info-layout h2').textContent;
+                    const descricao = produtoElement.querySelector('.produto-info-layout p').textContent;
+                    const precoTexto = produtoElement.querySelector('.valor-produto').textContent;
+                    const preco = parseFloat(precoTexto.replace('Preço: ', '').trim()); // Converte o preço para número
+
+                    // Crie um objeto com as informações do produto atual
+                    const produtoInfo = {
+                        imagemPath: imagemPath,
+                        nome: nome,
+                        descricao: descricao,
+                        preco: preco,
+                        quantidade: quantidade
+                    };
+
+                    // Adicione o objeto ao array de produtos do pedido
+                    produtosDoPedido.push(produtoInfo);
+                }
+            });
+
+            // Se houver produtos no pedido, armazene no localStorage e redirecione para a tela de pagamento
+            if (produtosDoPedido.length > 0) {
+                localStorage.setItem('produtosDoPedido', JSON.stringify(produtosDoPedido));
+                window.location.href = "tela_pagamento.html";
+            } else {
+                // Adicione aqui uma lógica para informar o usuário que nenhum produto foi selecionado
+                alert("Por favor, selecione pelo menos um produto antes de concluir o pedido.");
+            }
+        }
+
+        
+        
+    </script>
+</body>
+</html>

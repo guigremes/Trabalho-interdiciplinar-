@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <title>Tela de Entrada</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            text-align: center;
+        }
+
+        #app {
+            max-width: 400px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        #imagem {
+            max-width: 100%;
+            height: auto;
+        }
+
+        input, button {
+            margin-bottom: 10px;
+            padding: 8px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        button {
+            background-color: #3498db;
+            color: #fff;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+    </style>
+    
+    
+</head>
+<body>
+    <div id="app">
+        <!-- Conteúdo do formulário e botões -->
+        <h1>Entrada</h1>
+        <label for="email">E-mail</label>
+        <input type="text" placeholder="E-mail" id="email" name="email" required>
+
+        <label for="senha">Senha:</label>
+        <input type="password" placeholder="Senha" id="senha" name="senha" required>
+
+        <button id="cadastro">Cadastro</button>
+        <button id="botao_login">Login</button>
+        <a href="#" onclick="abrirFuncionario()">
+            <i class="fas fa-user"></i>
+        </a>
+
+        
+    </div>
+
+    
+
+    <script>
+            document.getElementById("botao_login").addEventListener("click", function () {
+                // Implemente a lógica de login aqui
+                var email = document.getElementById('email').value;
+                var senha = document.getElementById('senha').value;
+
+                autenticarUsuario(email, senha);
+            });
+
+         
+            function autenticarUsuario(email, senha) {
+                // Fazer uma solicitação ao servidor
+                fetch('http://localhost:3000/Login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ email, senha }),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    // Verificar a resposta do servidor
+                    if (data.autenticado) {
+                        // Armazenar informações de autenticação no localStorage
+                        localStorage.setItem('usuarioAutenticado', JSON.stringify(data));
+                        // Redirecionar para a tela de pedidos
+                        window.location.href = "tela_pedido.html";
+                    } else {
+                        alert("Falha no login. Verifique suas credenciais.")
+                    }
+                })
+                .catch(error => {
+                    console.error('Erro:', error);
+                    alert("Erro ao autenticar. Tente novamente.");
+                });
+            }
+
+            document.getElementById("cadastro").addEventListener("click", function () {
+                // Implemente a lógica de navegação para a tela de cadastro
+                window.location.href = "tela_cadastro.html";
+            });
+
+            function abrirFuncionario() {
+            window.location.href = "tela_funcionario.html";
+        }
+            
+
+    </script>
+
+</body>
+</html>

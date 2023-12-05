@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tela de Entrada</title>
+
+    <!-- Inclua a folha de estilo da Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            text-align: center;
+        }
+
+        #app {
+            max-width: 400px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        #imagem {
+            max-width: 100%;
+            height: auto;
+        }
+
+        input, button {
+            margin-bottom: 10px;
+            padding: 8px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        button {
+            background-color: #3498db;
+            color: #fff;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+    </style>
+    
+    
+</head>
+<body>
+    <div id="app">
+        <!-- Conteúdo do formulário e botões -->
+        <h1>Entrada</h1>
+        <label for="email">E-mail</label>
+        <input type="text" placeholder="E-mail" id="email" name="email" required>
+
+        <label for="senha">Senha:</label>
+        <input type="password" placeholder="Senha" id="senha" name="senha" required>
+
+        <button id="cadastro"> Cadastro</button>
+        <button id="botao_login">Login</button>
+
+
+        <i class="fas fa-user"></i>
+    </div>
+
+    <script>
+        // Se você já não tiver incluído o script da Font Awesome, adicione-o ao seu HTML.
+        // <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/js/all.min.js"></script>
+    </script>
+
+</body>
+</html>

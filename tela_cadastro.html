@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Tela de Cadastro</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                background-color: #f0f0f0;
+                margin: 0;
+                padding: 0;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                height: 100vh;
+            }
+            #test{
+                background-image: url('C:\\Users\\guigr\\Downloads\\transferir.jpg');
+                padding: 20px;
+                border-radius: 10px;
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+                width: 400px;
+                height: 200px;
+                background-position: center top; /* Centraliza horizontalmente e posiciona no topo verticalmente */
+            }
+               
+        
+
+            #cadastro-container {
+                background-color: #fff;
+                padding: 20px;
+                border-radius: 10px;
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+                width: 400px;
+                text-align: center;
+            }
+
+            input {
+                width: 80%;
+                margin-bottom: 10px;
+                padding: 8px;
+                box-sizing: border-box;
+            }
+
+            button {
+                width: 40%;
+                padding: 10px;
+                background-color: #4CAF50;
+                color: white;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+            }
+
+            button:hover {
+                background-color: #45a049;
+            }
+        </style>
+    </head>
+<body>
+
+    
+    <form id="cadastroForm" onsubmit="enviarFormulario(event)">
+        <div id="test">
+
+        </div>
+        <div id="cadastro-container">
+            <h2>Tela de Cadastro</h2>
+            <input type="text" placeholder="Nome (obrigatório)" id="nome" name="nome" required>
+            <input type="text" placeholder="E-mail (obrigatório)" id="email" name="email" required>
+            <input type="text" placeholder="Telefone (obrigatório)" id="telefone" name="telefone" required>
+            <input type="text" placeholder="Endereço (obrigatório)" id="endereco" name="endereco" required>
+            <input type="text" placeholder="Complemento (opcional)" id="complemento" name="complemento" required>
+            <input type="password" placeholder="Senha (obrigatório)" id="senha" name="senha" required>
+            <input type="password" placeholder="Confirme a Senha (obrigatório)" id="confirmacaosenha" name="confirmacao-senha" required>
+            <button type="submit" >Cadastrar</button>
+            <button id="voltar">voltar</button>
+            <p id="mensagem-label"></p>
+        </div>
+    </form>
+
+    <script>
+
+        
+        function enviarFormulario(event) {
+
+            event.preventDefault();
+           
+            // Obter os valores dos campos
+            var nome = document.getElementById('nome').value;
+            var email = document.getElementById('email').value;
+            var telefone = document.getElementById('telefone').value;
+            var endereco = document.getElementById('endereco').value;
+            var complemento = document.getElementById('complemento').value;
+            var senha = document.getElementById('senha').value;
+            var confirmacaosenha = document.getElementById('confirmacaosenha').value;
+
+            //validar os campos obrigatórios 
+            if (!nome || !email || !telefone || !endereco || !senha || !confirmacaosenha) {
+                alert("Todos os campos, exceto complemento, são obrigatórios.");
+                return;
+            }
+
+            //Validar a senha
+            if (senha !== confirmacaosenha) {
+                alert("As senhas estão diferentes.");
+                return;
+            }
+
+            //validar telefone
+            if (telefone.length > 14) {
+                alert("telefone invalido")
+                return
+            }
+            
+            var formData = {
+                nome: nome,
+                email: email,
+                telefone: telefone,
+                endereco: endereco,
+                complemento: complemento,
+                senha: senha
+            };
+
+            
+
+            // Enviar os dados para o servidor usando fetch ou outra biblioteca de requisições
+            fetch('http://localhost:3000/Cadastro', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                // mode: 'cors', // Adicione esta linha
+                body: JSON.stringify(formData),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert("Usuário cadastrado com sucesso!");
+                    window.location.href = "tela_entrada.html";
+                } else {
+                    alert(`Erro ao cadastrar usuário: ${data.message}`);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert("Erro ao cadastrar usuário. Por favor, tente novamente.");
+            });
+
+            
+        }
+
+        
+    </script>
+
+</body>
+</html>

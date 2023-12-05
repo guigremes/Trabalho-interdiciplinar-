@@ -1,0 +1,402 @@
+<!-- tela_pagamento.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tela de Pagamento</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+
+        #barra-topo {
+            background-color: #3498db;
+            color: #fff;
+            padding: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        #barra-topo a {
+            color: #fff;
+            text-decoration: none;
+            margin-right: 20px;
+        }
+
+        #produtos-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 50px;
+            max-width: 800px; /* Largura máxima do contêiner */
+            margin: 0 auto; /* Centraliza o contêiner */
+        }
+
+        .produto-layout {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 100%; /* Ocupa 100% da largura do contêiner */
+        }
+
+        .imagem-produto {
+            max-width: 200px;
+            height: auto;
+            margin-right: 30px; /* Adiciona espaço à direita da imagem */
+        }
+
+        .produto-info-layout {
+            flex-grow: 1;
+            text-align: flex-end;
+        }
+
+        .botoes-layout {
+            display: flex;
+            flex-direction: column; /* Alterado de line para row */
+            align-items: flex-end;
+            justify-content: flex-end; /* Adicionado para alinhar à direita */
+            margin-top: auto; /* Mover para a parte inferior */
+            margin-right: 70px;
+        }
+        
+
+        .botao {
+            background-color: #3498db;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            padding: 5px;
+            margin: 5px;
+            cursor: pointer;
+            align-items: flex-end;
+        }
+
+        .botao:hover {
+            background-color: #2980b9;
+        }
+
+        .quantidade-layout {
+            display: flex;
+            align-items: flex-end;
+            margin-left: 10px;
+        }
+
+        .quantidade-input {
+            width: 30px;
+            margin: 0 10px;
+            align-items: flex-end;
+        }
+
+        .valor-produto {
+            font-size: 14px;
+            color: #555;
+            margin-top: 5px;
+            text-align: right; /* Ajusta o texto para a direita */
+        }
+
+        .concluir-botao {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #3498db;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            padding: 10px;
+            cursor: pointer;
+        }
+
+        .concluir-botao:hover {
+            background-color: #2980b9;
+        }
+
+        .endereco-checkboxes {
+            display: flex;
+            flex-direction: line;
+            align-items: center;
+            margin-top: 10px; /* Add margin for spacing between checkboxes */
+        }
+
+        .endereco-titulo {
+        background-color: #3498db; /* Cor azul */
+        color: #fff; /* Cor do texto branco */
+        padding: 10px; /* Espaçamento interno */
+        width: 100%; /* Ocupa 100% da largura da tela */
+        box-sizing: border-box; /* Inclui padding e borda na largura total */
+        }
+
+    .endereco-titulo h3 {
+        margin: 0; /* Remover margens padrão do h3 */
+    }
+
+    #printPedidoContainer {
+        display: none;
+        border: 1px solid #ccc;
+        padding: 10px;
+        margin-top: 20px;
+        text-align: left;
+    }
+
+    #printPedido {
+        font-family: Arial, sans-serif;
+        white-space: pre-line; /* Para manter as quebras de linha (\n) */
+    }
+
+    .info-label {
+        font-size: 16px;
+        font-weight: bold;
+        text-align: right; /* Alterado para 'right' */
+        display: inline-block;
+    }
+
+    .produto-info {
+        margin-left: 20px;
+        flex-direction: line;
+    }
+</style>
+
+    
+    </style>
+</head>
+<body>
+    
+    <div id="barra-topo">
+        <!-- Adicione uma imagem aqui -->
+        <img src="caminho/para/sua/imagem.png" alt="Imagem" style="max-width: 30px; margin-right: 10px;">
+        
+        <div id="nome-sair">
+            <a href="#" onclick="abrirCarrinho()">
+                <i class="fas fa-shopping-cart"></i>
+            </a>
+            <!-- Adicione um span com um identificador ao redor do nome do cliente -->
+            <span id="nome-cliente-span">
+                <!-- O JavaScript será usado para preencher este span -->
+            </span>
+            <a href="#" onclick="sair()">Sair</a>
+        </div>
+    </div>
+
+    <h1>Detalhes do Pagamento</h1>
+
+    <div id="pagamento-container"></div>
+
+    <div id="formas-pagamento">
+
+        <div class="endereco-titulo">
+        <h2>Formas de Pagamento</h2>
+        </div>
+        <label><br><br><br>
+            <input type="radio" name="formaPagamento" value="Pix" checked>
+            No pix
+        </label>
+        <label>
+            <input type="radio" name="formaPagamento" value="cartao">
+            No local Cartão 
+        </label><br><br><br><br>
+
+    </div>
+    
+    <div class="endereco-cliente">
+        
+        <div class="endereco-titulo">
+            <h3>Endereço para entrega</h3>
+        </div><br><br>
+            <input type="checkbox" id="enderecoCheckbox" checked>
+            <label for="enderecoCheckbox">Usar endereço cadastrado </label><br>
+            <span id="endereco-cliente"></span><br><br><br><br>
+            
+             
+            <input type="checkbox" id="outroEnderecoCheckbox">
+            <label for="outroEnderecoCheckbox">Outro endereço</label>
+
+            <div id="outroEnderecoCampos" style="display: none;">
+                <label for="endereco">Endereço:</label>
+                <input type="text" id="endereco" name="endereco">
+
+                <label for="complemento">Complemento:</label>
+                <input type="text" id="complemento" name="complemento">
+        
+
+                <span id="endereco-cliente"></span>
+            </div>
+
+    </div><br><br><br><br>
+
+    <div id="printPedidoContainer" style="display: none;">
+        <h4>Detalhes do Pedido</h4>
+        <div id="printPedido"></div>
+    </div><br><br><br><br>
+    
+    
+    <button id="confirmarPedido">Confirmar</button>
+    
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Recupere os dados do pedido do localStorage
+            const produtosDoPedido = JSON.parse(localStorage.getItem('produtosDoPedido'));
+
+            // Verifique se há produtos no pedido
+            if (produtosDoPedido && produtosDoPedido.length > 0) {
+                const pagamentoContainer = document.getElementById('pagamento-container');
+
+                produtosDoPedido.forEach(produto => {
+                    const produtoElement = document.createElement('div');
+                    produtoElement.classList.add('produto-layout');
+
+                    produtoElement.innerHTML = `
+                        <img src="${produto.imagem_path}" alt="Novo Produto" class="imagem-produto">
+                        <div class="produto-info-layout">
+                            <h2>${produto.nome}</h2>
+                            <p>${produto.descricao}</p>
+                            <div class="botoes-layout">
+                                <h3>Quantidade: ${produto.quantidade}</h3>
+                                <h4>Valor Total: ${produto.preco * produto.quantidade}</h4>
+                            </div>
+                        </div>
+                    `;
+
+                    pagamentoContainer.appendChild(produtoElement);
+                });
+            } else {
+                // Adicione aqui uma lógica para informar o usuário que não há produtos no pedido
+                alert("Não há produtos no pedido.");
+            }
+            
+        });
+
+        document.getElementById('confirmarPedido').addEventListener('click', function () {
+            // Chame a função para gerar o print do pedido detalhado
+            gerarPrintPedido();
+
+            window.location.href = "tela_detalhes.html";
+
+            
+            const pagamentoContainer = document.getElementById('pagamento-container');
+            while (pagamentoContainer.firstChild) {
+                pagamentoContainer.removeChild(pagamentoContainer.firstChild);
+            }
+        })
+        
+
+        var outroEnderecoCheckbox = document.getElementById('outroEnderecoCheckbox');
+            var outroEnderecoCampos = document.getElementById('outroEnderecoCampos');
+
+            outroEnderecoCheckbox.addEventListener('change', function () {
+                // Mostrar ou ocultar os campos de endereço e complemento
+                outroEnderecoCampos.style.display = outroEnderecoCheckbox.checked ? 'block' : 'none';
+                
+                // Desmarcar a checkbox "enderecoCheckbox" se "outroEnderecoCheckbox" estiver marcado
+                enderecoCheckbox.checked = !outroEnderecoCheckbox.checked;
+            });
+
+            enderecoCheckbox.addEventListener('change', function () {
+                // Desmarcar a checkbox "outroEnderecoCheckbox" se "enderecoCheckbox" estiver marcado
+                outroEnderecoCheckbox.checked = false;
+
+                // Ocultar os campos de endereço e complemento se "enderecoCheckbox" estiver marcado
+                outroEnderecoCampos.style.display = 'none';
+            });
+
+        function abrirCarrinho() {
+            window.location.href = "tela_pagamento.html";
+        }
+
+        function redirecionarParaDetalhes() {
+            window.location.href = "tela_detalhes.html";
+        }
+
+        function sair() {
+            window.location.href = "tela_entrada.html";
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            // Verificar se o usuário está autenticado no localStorage
+            var usuarioAutenticado = localStorage.getItem('usuarioAutenticado');
+            
+            if (usuarioAutenticado) {
+                // Obter informações do usuário do localStorage
+                var usuarioInfo = JSON.parse(usuarioAutenticado);
+                
+                // Atualizar o conteúdo do span com o nome do cliente
+                document.getElementById('nome-cliente-span').textContent = usuarioInfo.nome; // Substitua 'email' pelo campo correto
+                document.getElementById('endereco-cliente').textContent = usuarioInfo.endereco; // Substitua 'email' pelo campo correto
+            }
+        });
+
+        function gerarPrintPedido() {
+            // Obtenha as informações necessárias do usuário e do pedido
+            var usuarioNome = document.getElementById('nome-cliente-span').textContent;
+            var formaPagamento = document.querySelector('input[name="formaPagamento"]:checked').value;
+            var endereco = enderecoCheckbox.checked ? document.getElementById('endereco-cliente').textContent : endereco.value + ' ' + complemento.value;
+
+            // Obtenha os produtos do pedido
+            var produtosDoPedido = JSON.parse(localStorage.getItem('produtosDoPedido'));
+
+            // Crie um print do pedido detalhado
+            
+
+            if (produtosDoPedido && produtosDoPedido.length > 0) {
+                    var totalGeral = 0
+                    var printPedido = `<div class="info-label" style="text-align: right">${usuarioNome}</div><br>`;
+                    produtosDoPedido.forEach(produto => {
+                    printPedido += `<div class="produto-info" style="margin: 0; padding: 0; width: 100%;">${produto.nome} &nbsp;&nbsp;&nbsp;&nbsp; ${produto.preco} * ${produto.quantidade} &nbsp;&nbsp;&nbsp;&nbsp; ${produto.preco * produto.quantidade}</div>`;
+                    totalGeral += produto.preco * produto.quantidade;
+                    
+                });
+            }
+            printPedido += `<br><div class="info-label">valor Total &nbsp;&nbsp;&nbsp;&nbsp&nbsp;&nbsp;&nbsp;&nbsp&nbsp;&nbsp;&nbsp;&nbsp&nbsp;&nbsp;&nbsp;&nbsp&nbsp;&nbsp;&nbsp;&nbsp</div>${totalGeral}`;
+
+            // Adicione as informações adicionais ao print do pedido
+            printPedido += `<br><div class="info-label">Endereço:</div>${enderecoCheckbox.checked ? document.getElementById('endereco-cliente').textContent : endereco.value + ' ' + complemento.value}
+                            <br><div class="info-label">Forma de Pagamento:</div>${formaPagamento}`;
+
+            // Exiba o print do pedido no console (substitua pelo código para gerar um print real)
+            console.log(printPedido);
+
+            fetch('http://localhost:3000/FinalizarPedido', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    usuarioNome: usuarioNome,
+                    formaPagamento: formaPagamento,
+                    endereco: endereco,
+                    totalGeral: totalGeral,
+                    produtosDoPedido: produtosDoPedido,
+                }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data.message);
+            })
+            .catch(error => {
+                console.error('Erro ao enviar dados do pedido:', error);
+            });
+
+            // Exiba as informações na área de detalhes do pedido
+            document.getElementById('printPedido').innerHTML = printPedido;
+
+            // Exiba o contêiner do pedido
+            document.getElementById('printPedidoContainer').style.display = 'block';
+
+            localStorage.setItem('printPedido', printPedido);
+        }
+
+    </script>
+</body>
+</html>

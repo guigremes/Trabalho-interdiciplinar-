@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+
+<head>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+
+        #barra-topo {
+            background-color: #3498db;
+            color: #fff;
+            padding: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        #barra-topo a {
+            color: #fff;
+            text-decoration: none;
+            margin-right: 20px;
+        }
+
+        #app {
+            max-width: 600px;
+            margin: 100px auto;
+            padding: 50px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            align-items: first baseline
+        }
+
+        #produtos-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 50px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .total-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 10px;
+        }
+
+        .info-label {
+            font-size: 16px;
+            font-weight: bold;
+            text-align: right; /* Alterado para 'right' */
+            display: inline-block;
+        }
+
+        .info-label-1 {
+            font-size: 16px;
+            font-weight: bold;
+            text-align: right; /* Alterado para 'right' */
+            display: inline-block;
+        }
+
+
+        .info-label-1 {
+            text-align: right;
+        }
+
+        .total-geral {
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .produto-info {
+            display: inline-block;
+            flex-direction: column;
+            margin-left: 10px;
+            align-items: left;
+            justify-content: space-between;
+            border-bottom: 1px solid #ccc;
+            margin: px 10;
+            text-align: left
+        }
+
+        .nome-produto {
+            flex: 10;
+        }
+
+        .preco-quantidade,
+        .subtotal {
+            margin-left: 20px;
+        }
+
+        .total-geral {
+            font-size: 20px;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+
+        #pedido-container,
+        #cabecalho {
+            border: 1px solid #ccc;
+            padding: 20px;
+            margin: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            background-color: #fff;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="barra-topo">
+        <!-- Adicione uma imagem aqui -->
+        <img src="caminho/para/sua/imagem.png" alt="Imagem" style="max-width: 30px; margin-right: 10px;">
+        
+        <div id="nome-sair">
+            <a href="#" onclick="abrirCarrinho()">
+                <i class="fas fa-shopping-cart"></i>
+            </a>
+            <!-- Adicione um span com um identificador ao redor do nome do cliente -->
+            <span id="nome-cliente-span">
+                <!-- O JavaScript será usado para preencher este span -->
+            </span>
+            <a href="#" onclick="sair()">Sair</a>
+        </div>
+    </div>
+
+    <h2>Detalhes do pedido</h2>
+    <div id="app">
+        <div id="detalhesPedido"></div>
+    </div>
+
+    <button onclick="voltarParaPedidos()">Voltar para Pedidos</button>
+
+    <script>
+
+            function abrirCarrinho() {
+                window.location.href = "tela_pagamento.html";
+            }
+
+            function sair() {       
+                window.location.href = "tela_entrada.html";
+            }
+
+            function voltarParaPedidos() {
+            window.location.href = "tela_pedido.html";
+        }
+
+            
+            document.addEventListener("DOMContentLoaded", function () {
+            // Verificar se o usuário está autenticado no localStorage
+            var usuarioAutenticado = localStorage.getItem('usuarioAutenticado');
+            
+            if (usuarioAutenticado) {
+                // Obter informações do usuário do localStorage
+                var usuarioInfo = JSON.parse(usuarioAutenticado);
+                
+                // Atualizar o conteúdo do span com o nome do cliente
+                document.getElementById('nome-cliente-span').textContent = usuarioInfo.nome; // Substitua 'email' pelo campo correto
+            }
+        });
+
+            document.addEventListener('DOMContentLoaded', function () {
+                var printPedido = localStorage.getItem('printPedido');
+                document.getElementById('detalhesPedido').innerHTML = printPedido;
+            });
+    </script>
+
+</body>
+
+</html>

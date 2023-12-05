@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tabela de Produtos</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+
+        #tabela-produtos {
+            max-width: 1000px;
+            margin: 50px auto;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #3498db;
+            color: #fff;
+        }
+
+        #tabela-pedidos {
+            max-width: 1000px;
+            margin: 50px auto;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="tabela-produtos">
+        <h2>Tabela de Produtos</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nome</th>
+                    <th>Descrição</th>
+                    <th>Preço (R$)</th>
+                    <th>Imagem</th>
+                </tr>
+            </thead>
+            <tbody id="corpo-tabela">
+                <!-- Os dados da tabela serão preenchidos aqui dinamicamente -->
+            </tbody>
+        </table>
+    </div>
+
+    <div id="formulario-produto">
+        <h2>Adicionar Novo Produto</h2>
+        <form onsubmit="adicionarNovoProduto(event)">
+            <label for="nome">Nome:</label>
+            <input type="text" id="nome" required>
+            
+            <label for="descricao">Descrição:</label>
+            <input type="text" id="descricao" required>
+            
+            <label for="preco">Preço (R$):</label>
+            <input type="number" id="preco" step="0.01" required>
+            
+            <label for="imagem">Imagem:</label>
+            <input type="text" id="imagem" required>
+            
+            <button type="submit">Adicionar Produto</button>
+        </form>
+    </div>
+
+
+    <div id="tabela-pedidos">
+        <h2>Tabela de Pedidos</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID Pedido</th>
+                    <th>Produto</th>
+                    <th>Quantidade</th>
+                    <th>Preço Total</th>
+                </tr>
+            </thead>
+            <tbody id="corpo-tabela-pedidos">
+                <!-- Os dados da tabela de pedidos serão preenchidos aqui dinamicamente -->
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        // Função para carregar e exibir a tabela de produtos
+        function carregarTabelaProdutos() {
+            // Fazer uma solicitação ao servidor para obter os dados dos produtos
+            fetch('http://localhost:3000/ListaProdutos')
+                .then(response => response.json())
+                .then(data => {
+                    // Verificar se há dados
+                    if (data.length > 0) {
+                        // Construir dinamicamente as linhas da tabela com os dados dos produtos
+                        var corpoTabela = document.getElementById('corpo-tabela');
+
+                        data.forEach(produto => {
+                            var row = corpoTabela.insertRow();
+                            var cellID = row.insertCell(0); // Adicionar célula para o ID
+                            var cellNome = row.insertCell(1);
+                            var cellDescricao = row.insertCell(2);
+                            var cellPreco = row.insertCell(3);
+                            var cellImagem = row.insertCell(4);
+                            var cellAcoes = row.insertCell(5)
+
+                            cellID.innerHTML = produto.id; // Preencher a célula do ID
+                            cellNome.innerHTML = produto.nome;
+                            cellDescricao.innerHTML = produto.descricao;
+                            cellPreco.innerHTML = produto.preco.toFixed(2);
+                            cellImagem.innerHTML = produto.imagem_path;
+                       
+                            cellAcoes.innerHTML = `<button onclick="editarProduto(${produto.id})">Editar</button> <button onclick="excluirProduto(${produto.id})">Excluir</button> <button data-action="salvar" data-id="${produto.id}">Salvar</button>`;
+
+                            var formularioProduto = document.getElementById('formulario-produto');
+                            formularioProduto.style.display = 'block';
+                            
+                        });
+                    } else {
+                        alert("Não há produtos cadastrados.");
+                    }
+                })
+                .catch(error => {
+                    console.error('Erro ao obter produtos:', error);
+                });
+        }
+
+        // Chamar a função ao carregar a página
+        carregarTabelaProdutos();
+
+        function editarProduto(id) {
+            // Desativar outros campos de edição antes de ativar o campo atual
+            var rows = document.querySelectorAll("#corpo-tabela tr");
+
+            rows.forEach(row => {
+                var cells = row.querySelectorAll("td");
+
+                cells.forEach((cell, index) => {
+                    if (index !== 0) { // Excluir coluna ID
+                        cell.contentEditable = "false"; // Desativar edição
+                    }
+                });
+            });
+
+            // Ativar campos de edição para a linha específica
+            var currentRow;
+            rows.forEach(row => {
+                var idCell = row.querySelector("td:first-child");
+                if (idCell && idCell.textContent === id.toString()) {
+                    currentRow = row;
+                }
+            });
+
+            if (currentRow) {
+                var currentCells = currentRow.querySelectorAll("td");
+                currentCells.forEach((cell, index) => {
+                    if (index !== 0 && index !== 5) { // Excluir coluna ID
+                        cell.contentEditable = "true"; // Ativar edição
+                    }
+                });
+
+                // Adicionar evento de clique ao botão "Salvar"
+                var saveButton = currentRow.querySelector("button[data-action='salvar']");
+                if (saveButton) {
+                    saveButton.addEventListener('click', function () {
+                        // Extrair os valores da linha sendo editada
+                        var nome = currentRow.querySelector("td:nth-child(2)").textContent.trim();
+                        var descricao = currentRow.querySelector("td:nth-child(3)").textContent.trim();
+                        var preco = currentRow.querySelector("td:nth-child(4)").textContent.trim();
+                        var imagem = currentRow.querySelector("td:nth-child(5)").textContent.trim();
+
+                        // Aqui você pode fazer algo com os valores, por exemplo, chamar enviarDadosEditadosParaServidor
+                        // Certifique-se de enviar o ID também para identificar o produto específico
+
+                        var id = saveButton.getAttribute('data-id');
+                        enviarDadosEditadosParaServidor(id, { nome, descricao, preco, imagem });
+
+                        // Desativar edição após salvar
+                        currentCells.forEach((cell, index) => {
+                            if (index !== 0) { // Excluir coluna ID
+                                cell.contentEditable = "false"; // Desativar edição
+                            }
+                        });
+                    });
+                }
+            }
+        }
+
+        function excluirProduto(id) {
+            if (confirm("Tem certeza que deseja excluir este produto?")) {
+                fetch(`http://localhost:3000/ExcluirProduto/${id}`, {
+                    method: 'DELETE',
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`Erro HTTP! Status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                        alert("Produto excluído com sucesso!");
+                        carregarTabelaProdutos();
+                        location.reload();
+                    } else {
+                        alert(`Erro ao excluir produto: ${data.message}`);
+                    }
+                })
+                .catch(error => {
+                    console.error('Erro ao excluir produto:', error);
+                });
+            }
+        }
+
+        
+        function enviarDadosEditadosParaServidor(id, dadosAtualizados) {
+            console.log(`Enviando dados para o servidor: ID ${id}, Dados: ${JSON.stringify(dadosAtualizados)}`);
+            fetch(`http://localhost:3000/AtualizarProduto/${id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    id: id,
+                    dadosAtualizados: dadosAtualizados
+                }),
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`Erro HTTP! Status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    carregarTabelaProdutos();
+                    location.reload();
+                } else {
+                    alert(`Erro ao salvar alterações: ${data.message}`);
+                }
+            })
+            .catch(error => {
+                console.error('Erro ao salvar alterações:', error);
+            });
+        }
+
+        function adicionarNovoProduto(event) {
+    event.preventDefault();
+
+    // Obtenha os valores do formulário
+    var nome = document.getElementById('nome').value;
+    var descricao = document.getElementById('descricao').value;
+    var preco = parseFloat(document.getElementById('preco').value);
+    var imagem = document.getElementById('imagem').value;
+
+    // Enviar os dados para o servidor
+    fetch('http://localhost:3000/CadastroProduto', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            nome: nome,
+            descricao: descricao,
+            preco: preco,
+            imagem_path: imagem,
+        }),
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.id) {
+            alert('Produto adicionado com sucesso!');
+            carregarTabelaProdutos(); // Atualize a tabela após a adição do produto
+        } else {
+            alert('Erro ao adicionar produto.');
+        }
+    })
+    .catch(error => {
+        console.error('Erro ao adicionar produto:', error);
+    });
+}
+
+function carregarTabelaPedidos() {
+            // Fazer uma solicitação ao servidor para obter os dados dos pedidos
+            fetch('http://localhost:3000/ListaPedidos')
+                .then(response => response.json())
+                .then(data => {
+                    // Verificar se há dados
+                    if (data.length > 0) {
+                        // Construir dinamicamente as linhas da tabela com os dados dos pedidos
+                        var corpoTabelaPedidos = document.getElementById('corpo-tabela-pedidos');
+
+                        data.forEach(pedido => {
+                            var rowPedido = corpoTabelaPedidos.insertRow();
+                            var cellIDPedido = rowPedido.insertCell(0);
+                            var cellProdutoPedido = rowPedido.insertCell(1);
+                            var cellQuantidadePedido = rowPedido.insertCell(2);
+                            var cellPrecoTotalPedido = rowPedido.insertCell(3);
+
+                            cellIDPedido.innerHTML = pedido.id;
+                            cellProdutoPedido.innerHTML = pedido.produto;
+                            cellQuantidadePedido.innerHTML = pedido.quantidade;
+                            cellPrecoTotalPedido.innerHTML = pedido.preco_total ? pedido.preco_total.toFixed(2) : 'Preço total não disponível'
+                        });
+                    } else {
+                        alert("Não há pedidos cadastrados.");
+                    }
+                })
+                .catch(error => {
+                    console.error('Erro ao obter pedidos:', error);
+                });
+        }
+
+        function carregarPedidos() {
+    // Fazer uma solicitação ao servidor para obter os dados dos pedidos
+    fetch('http://localhost:3000/ListaPedidos')
+        .then(response => response.text())
+        .then(data => {
+            // Verificar se há dados
+            if (data.trim() !== '') {  // Verifica se a string não está vazia
+                // Construir uma string com as informações dos pedidos
+                var pedidosString = '<h2>Tabela de Pedidos</h2>';
+
+                // Dividir o texto em linhas
+                const linhasPedidos = data.split('\n');
+
+                linhasPedidos.forEach(linha => {
+                    // Construir a string do pedido
+                    pedidosString += `
+                        <div>
+                            <p>${linha}</p>
+                        </div>
+                    `;
+                });
+
+                // Exibir as informações na página
+                var tabelaPedidosElement = document.getElementById('tabela-pedidos');
+                tabelaPedidosElement.innerHTML = pedidosString;
+            } else {
+                alert("Não há pedidos cadastrados.");
+            }
+        })
+        .catch(error => {
+            console.error('Erro ao obter pedidos:', error);
+        });
+}
+
+// Chamar a função ao carregar a página
+carregarPedidos();
+
+        
+
+        // Chamar a função ao carregar a página
+        carregarTabelaPedidos();
+
+
+        
+    </script>
+</body>
+</html>
